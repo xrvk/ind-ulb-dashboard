@@ -226,6 +226,29 @@ Demo mode generates believable user distributions (~70% low / 15% moderate / 7% 
 
 ---
 
+## 🤖 Dependency update auto-merge automation
+
+This repo includes `.github/workflows/dependency-automerge.yml` to process Dependabot pull requests and enable auto-merge with `GITHUB_TOKEN`.
+
+What it does:
+1. Runs on `pull_request_target` for Dependabot-authored PRs.
+2. Adds the `automerge` label.
+3. Submits an approval review.
+4. Enables PR auto-merge (`--auto --squash`) so merge happens after required checks are green.
+
+Required repository settings:
+1. Enable **Allow auto-merge** in repository settings.
+2. Configure branch protection on `main` with required status checks, including:
+   - `CI / checks`
+   - `Dependency Review / Dependency Review`
+3. Ensure branch protection review settings permit this automation path for bot-authored dependency PRs.
+
+Policy notes:
+1. Scope is restricted to `dependabot[bot]` pull requests.
+2. Merges still wait on branch protection and required checks.
+
+---
+
 ## 🔌 Connect your enterprise
 
 The Import panel needs two things:
