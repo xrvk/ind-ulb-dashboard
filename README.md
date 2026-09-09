@@ -232,8 +232,8 @@ This repo includes `.github/workflows/dependency-automerge.yml` to process Depen
 
 What it does:
 1. Runs on `pull_request_target` for Dependabot-authored PRs.
-2. Adds the `automerge` label.
-3. Submits an approval review.
+2. Creates the `automerge` label if needed, then adds it to the PR.
+3. Submits an approval review when repository policy allows it.
 4. Enables PR auto-merge (`--auto --squash`) so merge happens after required checks are green.
 
 Required repository settings:
@@ -241,7 +241,7 @@ Required repository settings:
 2. Configure branch protection on `main` with required status checks, including:
    - `CI / checks`
    - `Dependency Review / Dependency Review`
-3. Ensure branch protection review settings permit this automation path for bot-authored dependency PRs.
+3. If required reviews are enabled, ensure branch protection review settings permit this automation path for bot-authored dependency PRs.
 
 Policy notes:
 1. Scope is restricted to `dependabot[bot]` pull requests.
