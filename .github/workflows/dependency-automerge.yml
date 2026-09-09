@@ -6,6 +6,7 @@ on:
 
 permissions:
   contents: write
+  issues: write
   pull-requests: write
 
 jobs:
@@ -15,6 +16,12 @@ jobs:
       github.event.pull_request.user.login == 'dependabot[bot]'
     runs-on: ubuntu-latest
     steps:
+      - name: Ensure automerge label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+        run: gh label create automerge --repo "$REPO" --color 0E8A16 --description "Automatically merge when required checks pass" --force
+
       - name: Add automerge label
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -22,7 +29,8 @@ jobs:
           REPO: ${{ github.repository }}
         run: gh pr edit "$PR_NUMBER" --repo "$REPO" --add-label automerge
 
-      - name: Approve dependency PR
+      - name: Approve dependency PR if allowed
+        continue-on-error: true
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -30,7 +38,6 @@ jobs:
         run: gh pr review "$PR_NUMBER" --repo "$REPO" --approve --body "Dependency update validated by automation. Enabling auto-merge once required checks pass."
 
       - name: Enable pull request auto-merge
-        if: contains(github.event.pull_request.labels.*.name, 'automerge')
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
